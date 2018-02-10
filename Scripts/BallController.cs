@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,23 +8,25 @@ public class BallController : MonoBehaviour {
 
     bool getDestroyedOnNextHit = false;
 
-	// Use this for initialization
-	void Start () {
-	}
-	
-	// Update is called once per frame
-	void Update () {
-      if(InMotion())
+    // Use this for initialization
+    void Start() {
+    }
+
+    // Update is called once per frame
+    void Update() {
+        if (InMotion())
+        {
+            GameController.SetIsAnyBallInMotion(true);
+        } else
         {
             getDestroyedOnNextHit = false;
-            GameController.SetIsAnyBallInMotion(true);
         }
-	}
+    }
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
 
-        if(collision.collider.transform.tag == gameObject.tag && getDestroyedOnNextHit)
+        if (collision.collider.transform.tag == gameObject.tag && getDestroyedOnNextHit)
         {
             Destroy(gameObject, 0.00000000001f);
         }
@@ -33,16 +36,20 @@ public class BallController : MonoBehaviour {
         {
             getDestroyedOnNextHit = true;
         }
-    
+
     }
 
     private bool InMotion()
     {
-        if(GetComponent<Rigidbody2D>().velocity.x < 0.001 && GetComponent<Rigidbody2D>().velocity.y < 0.001)
+
+        if (Math.Abs(GetComponent<Rigidbody2D>().velocity.x) < 0.05 && Math.Abs(GetComponent<Rigidbody2D>().velocity.y) < 0.05)
         {
+            GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);
             return false;
         }
+
         return true;
+
     }
 
 }

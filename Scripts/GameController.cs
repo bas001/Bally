@@ -7,6 +7,7 @@ using UnityEngine;
 public class GameController : MonoBehaviour {
 
     private static readonly int MAX_NUMBER_OF_TRYS = 50;
+
     private static bool isAnyBallInMotion = false;
 
     private System.Random rnd = new System.Random();
@@ -34,25 +35,22 @@ public class GameController : MonoBehaviour {
         ball = GameObject.FindWithTag("circleCollider").GetComponent<CircleCollider2D>();
     }
 
-    // Update is called once per frame
+    // Update is called after the Update of BallController
     void Update()
     {
-        // set to true by BallController
-        isAnyBallInMotion = false;
-    }
 
-    private void LateUpdate()
-    {
-        if(playing)
+        if (playing)
         {
-            if (!isAnyBallInMotion && sw.ElapsedMilliseconds > 100)
+            if (!isAnyBallInMotion && sw.ElapsedMilliseconds > 2000)
             {
                 CreateRandomBall();
                 sw.Reset();
                 sw.Start();
             }
         }
-      
+
+        // set to true by BallController
+        isAnyBallInMotion = false;
     }
 
     private void CreateRandomBall()
@@ -62,7 +60,7 @@ public class GameController : MonoBehaviour {
         int counter = 0;
         do
         {
-            nextPosition = new Vector2(nextRandom(v2 => v2.x), nextRandom(v2 => v2.y));
+            nextPosition = new Vector2(nextRandomPosition(v2 => v2.x), nextRandomPosition(v2 => v2.y));
             colliding = Physics2D.OverlapCircle(nextPosition, ball.radius);
             counter++;
         } while (colliding && counter != MAX_NUMBER_OF_TRYS);
@@ -74,10 +72,21 @@ public class GameController : MonoBehaviour {
             return;
         }
 
-        Instantiate(Resources.Load("blueBall"), nextPosition, Quaternion.identity);
+        Instantiate(Resources.Load(NextRandomBallColor()), nextPosition, Quaternion.identity);
     }
 
-    private float nextRandom(Func<Vector2,float> GetPart)
+    private String NextRandomBallColor()
+    {
+        int next = rnd.Next(1, 3);
+        switch(next)
+        {
+            case 1: return "blueBall";
+            case 2: return "redBall";
+        }
+        return "";
+    }
+
+    private float nextRandomPosition(Func<Vector2,float> GetPart)
     {
         int next = rnd.Next((int)(GetPart(MinMaxVector.min) * 100), (int)(GetPart(MinMaxVector.max) * 100));
         return (float)next / 100;

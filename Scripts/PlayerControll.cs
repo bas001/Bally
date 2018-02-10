@@ -9,18 +9,26 @@ public class PlayerControll : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        print("start");
     }
 
     // Update is called once per frame
     void Update()
     {
 
-        float horizontalVelocity = Input.GetAxis("Horizontal");
-        float verticalVelocity = Input.GetAxis("Vertical");
+        if (Input.touchSupported)
+        {
+            Vector2 touchDeltaPosition = Input.GetTouch(0).deltaPosition;
+            GetComponent<Rigidbody2D>().velocity = new Vector2(touchDeltaPosition.x, touchDeltaPosition.y);
+            
+        } else
+        {
+            float horizontalVelocity = Input.GetAxis("Horizontal");
+            float verticalVelocity = Input.GetAxis("Vertical");
 
-        GetComponent<Rigidbody2D>().velocity =
-            new Vector2(horizontalVelocity * speed, verticalVelocity * speed);
+            GetComponent<Rigidbody2D>().velocity =
+                new Vector2(horizontalVelocity * speed, verticalVelocity * speed);
+        }
+
 
     }
 
