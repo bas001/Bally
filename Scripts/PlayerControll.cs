@@ -16,17 +16,23 @@ public class PlayerControll : MonoBehaviour {
     {
 
         if (Input.touchSupported)
-        {
-            Vector2 touchDeltaPosition = Input.GetTouch(0).deltaPosition;
-            GetComponent<Rigidbody2D>().velocity = new Vector2(touchDeltaPosition.x, touchDeltaPosition.y);
-            
-        } else
+        { 
+
+            Vector3 pos = Camera.main.ScreenToWorldPoint(new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, 0));
+            GetComponent<Transform>().position = pos;
+
+
+
+        }
+        else
         {
             float horizontalVelocity = Input.GetAxis("Horizontal");
             float verticalVelocity = Input.GetAxis("Vertical");
 
             GetComponent<Rigidbody2D>().velocity =
                 new Vector2(horizontalVelocity * speed, verticalVelocity * speed);
+
+
         }
 
 
