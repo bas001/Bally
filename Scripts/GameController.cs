@@ -7,6 +7,7 @@ using UnityEngine;
 public class GameController : MonoBehaviour {
 
     private static readonly int MAX_NUMBER_OF_TRYS = 50;
+    private static readonly int NEXT_BALL_TIMEOUT = 2000;
 
     private static bool isAnyBallInMotion = false;
 
@@ -14,8 +15,13 @@ public class GameController : MonoBehaviour {
     private Stopwatch sw = new Stopwatch();
     private bool playing = true;
 
-    private GameObject table;
     private CircleCollider2D ball;
+    private GameObject rightWall;
+    private GameObject downWall;
+    private GameObject upWall;
+    private GameObject leftWall;
+    private List<GameObject> walls = new List<GameObject>();
+
 
     public static void SetIsAnyBallInMotion(bool value)
     {
@@ -25,23 +31,55 @@ public class GameController : MonoBehaviour {
     // Use this for initialization
     void Start () {
         InstantiateGameObjects();
-        MinMaxVector.FindMinMax(table, ball);
+        MinMaxVector.FindMinMax(RetrievePoints(), ball);
         sw.Start();
+    }
+
+    private List<Vector2> RetrievePoints()
+    {
+        List<Vector2> points = new List<Vector2>();
+        foreach (var wall in walls)
+        {
+            Vector3 vector3 = wall.GetComponent<Transform>().position;
+            points.Add(new Vector2(vector3.x, vector3.y));
+        }
+
+        return points;
     }
 
     private void InstantiateGameObjects()
     {
-        table = GameObject.FindWithTag("Table");
         ball = GameObject.FindWithTag("circleCollider").GetComponent<CircleCollider2D>();
+
+        rightWall = GameObject.Find("rightWall");
+        rightWall.GetComponent<SpriteRenderer>().color = Color.red;
+        rightWall.gameObject.tag = "redBall";
+
+        downWall = GameObject.Find("downWall");
+        downWall.GetComponent<SpriteRenderer>().color = Color.green;
+        downWall.gameObject.tag = "greenBall";
+
+        upWall = GameObject.Find("upWall");
+        upWall.GetComponent<SpriteRenderer>().color = Color.yellow;
+        upWall.gameObject.tag = "yellowBall";
+
+        leftWall = GameObject.Find("leftWall");
+        leftWall.GetComponent<SpriteRenderer>().color = Color.blue;
+        leftWall.gameObject.tag = "blueBall";
+
+        walls.Add(rightWall);
+        walls.Add(downWall);
+        walls.Add(upWall);
+        walls.Add(leftWall);
+
     }
 
     // Update is called after the Update of BallController
     void Update()
     {
-
         if (playing)
         {
-            if (!isAnyBallInMotion && sw.ElapsedMilliseconds > 2000)
+            if (!isAnyBallInMotion && sw.ElapsedMilliseconds > NEXT_BALL_TIMEOUT)
             {
                 CreateRandomBall();
                 sw.Reset();
@@ -77,11 +115,14 @@ public class GameController : MonoBehaviour {
 
     private String NextRandomBallColor()
     {
-        int next = rnd.Next(1, 3);
+        int next = rnd.Next(1, 5);
         switch(next)
         {
             case 1: return "blueBall";
             case 2: return "redBall";
+            case 3: return "yellowBall";
+            case 4: return "greenBall";
+
         }
         return "";
     }
@@ -98,34 +139,30 @@ public class GameController : MonoBehaviour {
         public static Vector2 min;
         public static Vector2 max;
     
-        public static void FindMinMax(GameObject table, CircleCollider2D ball)
+        public static void FindMinMax(List<Vector2> points, CircleCollider2D ball)
         {
             float minY = float.MaxValue;
             float minX = float.MaxValue;
             float maxY = float.MinValue;
             float maxX = float.MinValue;
 
-            Vector2[] points = table.GetComponent<EdgeCollider2D>().points;
-            for (int i = 0; i < points.Length; i++)
+            foreach (var point in points)
             {
-                float y = points[i].y * table.GetComponent<Transform>().localScale.y;
-                float x = points[i].x * table.GetComponent<Transform>().localScale.x;
-
-                if (y < minY)
+                if (point.y < minY)
                 {
-                    minY = y;
+                    minY = point.y;
                 }
-                if (x < minX)
+                if (point.x < minX)
                 {
-                    minX = x;
+                    minX = point.x;
                 }
-                if (y > maxY)
+                if (point.y > maxY)
                 {
-                    maxY = y;
+                    maxY = point.y;
                 }
-                if (x > maxX)
+                if (point.x > maxX)
                 {
-                    maxX = x;
+                    maxX = point.x;
                 }
 
             }

@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class BallController : MonoBehaviour {
 
+    private static readonly double MIN_SPEED = 0.1;
 
     bool getDestroyedOnNextHit = false;
 
@@ -41,8 +42,7 @@ public class BallController : MonoBehaviour {
 
     private bool InMotion()
     {
-
-        if (Math.Abs(GetComponent<Rigidbody2D>().velocity.x) < 0.05 && Math.Abs(GetComponent<Rigidbody2D>().velocity.y) < 0.05)
+        if (Math.Abs(GetComponent<Rigidbody2D>().velocity.x) < MIN_SPEED && Math.Abs(GetComponent<Rigidbody2D>().velocity.y) < MIN_SPEED)
         {
             GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);
             return false;
