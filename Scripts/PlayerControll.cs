@@ -1,10 +1,13 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class PlayerControll : MonoBehaviour {
 
-    int speed = 5;
+    private int speed = 5;
+    public Text debugText;
 
     // Use this for initialization
     void Start()
@@ -16,11 +19,13 @@ public class PlayerControll : MonoBehaviour {
     {
 
         if (Input.touchSupported)
-        { 
+        {
 
-            Vector3 pos = Camera.main.ScreenToWorldPoint(new Vector3(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y, 0));
-            GetComponent<Transform>().position = pos;
+            float x = Input.GetTouch(0).position.x;
+            float y = Input.GetTouch(0).position.y;
+            debugText.text = (int)x + ", " + (int)y;
 
+            GetComponent<Transform>().position = new Vector2(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y);
 
 
         }
@@ -32,10 +37,32 @@ public class PlayerControll : MonoBehaviour {
             GetComponent<Rigidbody2D>().velocity =
                 new Vector2(horizontalVelocity * speed, verticalVelocity * speed);
 
+            Vector3 screenPos = new Vector3(1260,688, 12);
+            Vector3 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
+
+
+            int width = Screen.width;
+            int height = Screen.height;
+            print(width + ", " + height);
+            debugText.text = (int)width + ", " + (int)height;
+
+
 
         }
 
 
+
+
+    }
+
+    void check()
+    {
+        if (Math.Abs(GetComponent<Transform>().position.x - new Vector2(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y).x) > 3
+    || Math.Abs(GetComponent<Transform>().position.y - new Vector2(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y).y) > 3)
+        {
+            GetComponent<Rigidbody2D>().AddForce(new Vector2(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y), ForceMode2D.Impulse);
+
+        }
     }
 
 }

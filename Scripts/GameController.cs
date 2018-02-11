@@ -49,28 +49,56 @@ public class GameController : MonoBehaviour {
 
     private void InstantiateGameObjects()
     {
-        ball = GameObject.FindWithTag("circleCollider").GetComponent<CircleCollider2D>();
+        //screen size
+        int width = Screen.width;
+        int height = Screen.height;
+        
+        print(width +", " + height);
+
+        int wallSize = height / 4;
+
+
+        Camera m_OrthographicCamera = Camera.main;
+        m_OrthographicCamera.transform.position = new Vector3(width / 2, height / 2, -10);
+        m_OrthographicCamera.orthographic = true;
+        m_OrthographicCamera.orthographicSize = height/2 + 1;
+        m_OrthographicCamera.rect = new Rect(0, 0, width, height);
+
 
         rightWall = GameObject.Find("rightWall");
         rightWall.GetComponent<SpriteRenderer>().color = Color.red;
         rightWall.gameObject.tag = "redBall";
+        rightWall.gameObject.transform.position = new Vector3(width, height / 2);
+        rightWall.gameObject.transform.localScale = new Vector3(wallSize, height);
 
         downWall = GameObject.Find("downWall");
         downWall.GetComponent<SpriteRenderer>().color = Color.green;
         downWall.gameObject.tag = "greenBall";
+        downWall.gameObject.transform.position = new Vector3(width /2, 0);
+        downWall.gameObject.transform.localScale = new Vector3(wallSize, width);
 
         upWall = GameObject.Find("upWall");
         upWall.GetComponent<SpriteRenderer>().color = Color.yellow;
         upWall.gameObject.tag = "yellowBall";
+        upWall.gameObject.transform.position = new Vector3(width / 2, height);
+        upWall.gameObject.transform.localScale = new Vector3(wallSize, width);
 
         leftWall = GameObject.Find("leftWall");
         leftWall.GetComponent<SpriteRenderer>().color = Color.blue;
         leftWall.gameObject.tag = "blueBall";
+        leftWall.gameObject.transform.position = new Vector3(0, height / 2, 0);
+        leftWall.gameObject.transform.localScale = new Vector3(wallSize, height);
 
         walls.Add(rightWall);
         walls.Add(downWall);
         walls.Add(upWall);
         walls.Add(leftWall);
+
+
+
+
+        ball = GameObject.FindWithTag("circleCollider").GetComponent<CircleCollider2D>();
+
 
     }
 
