@@ -37,20 +37,7 @@ public class PlayerControll : MonoBehaviour {
             GetComponent<Rigidbody2D>().velocity =
                 new Vector2(horizontalVelocity * speed, verticalVelocity * speed);
 
-            Vector3 screenPos = new Vector3(1260,688, 12);
-            Vector3 worldPos = Camera.main.ScreenToWorldPoint(screenPos);
-
-
-            int width = Screen.width;
-            int height = Screen.height;
-            print(width + ", " + height);
-            debugText.text = (int)width + ", " + (int)height;
-
-
-
         }
-
-
 
 
     }

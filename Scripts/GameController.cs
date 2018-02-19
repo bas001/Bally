@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using UnityEngine;
@@ -8,6 +7,7 @@ public class GameController : MonoBehaviour {
 
     private static readonly int MAX_NUMBER_OF_TRYS = 50;
     private static readonly int NEXT_BALL_TIMEOUT = 2000;
+    private static readonly float CIRCLE_RADIUS = 0.5f;
 
     private static bool isAnyBallInMotion = false;
 
@@ -15,7 +15,7 @@ public class GameController : MonoBehaviour {
     private Stopwatch sw = new Stopwatch();
     private bool playing = true;
 
-    private CircleCollider2D ball;
+    private float ballScale;
     private GameObject rightWall;
     private GameObject downWall;
     private GameObject upWall;
@@ -30,8 +30,9 @@ public class GameController : MonoBehaviour {
 
     // Use this for initialization
     void Start () {
+        GameObject.Find("Player").SetActive(false);
         InstantiateGameObjects();
-        MinMaxVector.FindMinMax(RetrievePoints(), ball);
+        MinMaxVector.FindMinMax(RetrievePoints(), CIRCLE_RADIUS * ballScale);
         sw.Start();
     }
 
@@ -49,14 +50,10 @@ public class GameController : MonoBehaviour {
 
     private void InstantiateGameObjects()
     {
-        //screen size
         int width = Screen.width;
         int height = Screen.height;
-        
-        print(width +", " + height);
 
-        int wallSize = height / 4;
-
+        int wallScaleThickness = height / 4;
 
         Camera m_OrthographicCamera = Camera.main;
         m_OrthographicCamera.transform.position = new Vector3(width / 2, height / 2, -10);
@@ -67,38 +64,36 @@ public class GameController : MonoBehaviour {
 
         rightWall = GameObject.Find("rightWall");
         rightWall.GetComponent<SpriteRenderer>().color = Color.red;
-        rightWall.gameObject.tag = "redBall";
+        rightWall.gameObject.tag = "red";
         rightWall.gameObject.transform.position = new Vector3(width, height / 2);
-        rightWall.gameObject.transform.localScale = new Vector3(wallSize, height);
+        rightWall.gameObject.transform.localScale = new Vector3(wallScaleThickness, height);
 
         downWall = GameObject.Find("downWall");
         downWall.GetComponent<SpriteRenderer>().color = Color.green;
-        downWall.gameObject.tag = "greenBall";
+        downWall.gameObject.tag = "green";
         downWall.gameObject.transform.position = new Vector3(width /2, 0);
-        downWall.gameObject.transform.localScale = new Vector3(wallSize, width);
+        downWall.gameObject.transform.localScale = new Vector3(wallScaleThickness, width);
 
         upWall = GameObject.Find("upWall");
         upWall.GetComponent<SpriteRenderer>().color = Color.yellow;
-        upWall.gameObject.tag = "yellowBall";
+        upWall.gameObject.tag = "yellow";
         upWall.gameObject.transform.position = new Vector3(width / 2, height);
-        upWall.gameObject.transform.localScale = new Vector3(wallSize, width);
+        upWall.gameObject.transform.localScale = new Vector3(wallScaleThickness, width);
 
         leftWall = GameObject.Find("leftWall");
         leftWall.GetComponent<SpriteRenderer>().color = Color.blue;
-        leftWall.gameObject.tag = "blueBall";
+        leftWall.gameObject.tag = "blue";
         leftWall.gameObject.transform.position = new Vector3(0, height / 2, 0);
-        leftWall.gameObject.transform.localScale = new Vector3(wallSize, height);
+        leftWall.gameObject.transform.localScale = new Vector3(wallScaleThickness, height);
 
         walls.Add(rightWall);
         walls.Add(downWall);
         walls.Add(upWall);
         walls.Add(leftWall);
 
-
-
-
-        ball = GameObject.FindWithTag("circleCollider").GetComponent<CircleCollider2D>();
-
+       
+        ballScale = height / 25;
+        
 
     }
 
@@ -109,7 +104,7 @@ public class GameController : MonoBehaviour {
         {
             if (!isAnyBallInMotion && sw.ElapsedMilliseconds > NEXT_BALL_TIMEOUT)
             {
-                CreateRandomBall();
+                InstantiateRandomBall();
                 sw.Reset();
                 sw.Start();
             }
@@ -119,15 +114,15 @@ public class GameController : MonoBehaviour {
         isAnyBallInMotion = false;
     }
 
-    private void CreateRandomBall()
+    private void InstantiateRandomBall()
     {
         Vector2 nextPosition;
         bool colliding = true;
         int counter = 0;
         do
         {
-            nextPosition = new Vector2(nextRandomPosition(v2 => v2.x), nextRandomPosition(v2 => v2.y));
-            colliding = Physics2D.OverlapCircle(nextPosition, ball.radius);
+            nextPosition = new Vector2(NextRandomPosition(v2 => v2.x), NextRandomPosition(v2 => v2.y));
+            colliding = Physics2D.OverlapCircle(nextPosition, CIRCLE_RADIUS * ballScale);
             counter++;
         } while (colliding && counter != MAX_NUMBER_OF_TRYS);
 
@@ -138,24 +133,27 @@ public class GameController : MonoBehaviour {
             return;
         }
 
-        Instantiate(Resources.Load(NextRandomBallColor()), nextPosition, Quaternion.identity);
+        var ball = BallFactory.CreateBall();
+        ball.GetComponent<SpriteRenderer>().color = NextRandomBallColor();
+        
+        Instantiate(ball, nextPosition, Quaternion.identity);
     }
 
-    private String NextRandomBallColor()
+    private Color NextRandomBallColor()
     {
         int next = rnd.Next(1, 5);
         switch(next)
         {
-            case 1: return "blueBall";
-            case 2: return "redBall";
-            case 3: return "yellowBall";
-            case 4: return "greenBall";
+            case 1: return Color.blue;
+            case 2: return Color.red;
+            case 3: return Color.yellow;
+            case 4: return Color.green;
 
         }
-        return "";
+        return Color.white;
     }
 
-    private float nextRandomPosition(Func<Vector2,float> GetPart)
+    private float NextRandomPosition(Func<Vector2,float> GetPart)
     {
         int next = rnd.Next((int)(GetPart(MinMaxVector.min) * 100), (int)(GetPart(MinMaxVector.max) * 100));
         return (float)next / 100;
@@ -167,7 +165,7 @@ public class GameController : MonoBehaviour {
         public static Vector2 min;
         public static Vector2 max;
     
-        public static void FindMinMax(List<Vector2> points, CircleCollider2D ball)
+        public static void FindMinMax(List<Vector2> points, float ballRadius)
         {
             float minY = float.MaxValue;
             float minX = float.MaxValue;
@@ -195,8 +193,8 @@ public class GameController : MonoBehaviour {
 
             }
 
-            min = new Vector2(minX + ball.radius, minY + ball.radius);
-            max = new Vector2(maxX - ball.radius, maxY - ball.radius);
+            min = new Vector2(minX + ballRadius, minY + ballRadius);
+            max = new Vector2(maxX - ballRadius, maxY - ballRadius);
         }
 
     }
