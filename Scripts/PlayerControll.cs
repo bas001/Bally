@@ -6,7 +6,7 @@ using UnityEngine.UI;
 
 public class PlayerControll : MonoBehaviour {
 
-    private int speed = 5;
+    private int speed = 500;
     public Text debugText;
 
     // Use this for initialization

@@ -26,6 +26,10 @@ public class BallController : MonoBehaviour {
 
     private void OnCollisionEnter2D(Collision2D collision)
     {
+        if(gameObject.name != "ball")
+        {
+            return;
+        }
 
         if (collision.collider.transform.tag == gameObject.tag && getDestroyedOnNextHit)
         {
