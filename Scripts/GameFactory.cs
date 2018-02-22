@@ -1,27 +1,38 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GameFactory
 {
 
-    private static List<GameObject> walls = new List<GameObject>();
     private static float ballScale;
-    private static Dictionary<int, KeyValuePair<string, Color>> colorDictionary;
-
-    public static List<GameObject> GetWalls()
-    {
-        return walls;
-    }
     public static float GetBallScale()
     {
         return ballScale;
     }
-    public static KeyValuePair<string, Color> GetColor(int key)
+    private static Dictionary<int, KeyValuePair<string, Color>> colorDictionary = new Dictionary<int, KeyValuePair<string, Color>>
+        {
+            { 1, new KeyValuePair<string, Color>("blue", Color.blue) },
+            { 2, new KeyValuePair<string, Color>("red", Color.red) },
+            { 3, new KeyValuePair<string, Color>("yellow", Color.yellow) },
+            { 4, new KeyValuePair<string, Color>("green", Color.green) }
+        };
+
+    public static KeyValuePair<string, Color> GetRandomColor()
     {
-        return colorDictionary[key];
+        return colorDictionary[new System.Random().Next(1, 5)];
     }
 
+    public static Vector2? NextRandomPosition()
+    {
+        var nextPosition = new Vector2(GameFactory.NextRandomPosition(v2 => v2.x), GameFactory.NextRandomPosition(v2 => v2.y));
+        if(Physics2D.OverlapCircle(nextPosition, BallFactory.BALL_RADIUS * GameFactory.GetBallScale() + 1))
+        {
+            return null;
+        }
+        return nextPosition;
+    }
 
     public static void Init()
     {
@@ -29,7 +40,7 @@ public class GameFactory
         int height = Screen.height;
 
         int wallScaleThickness = height / 4;
-        ballScale = height / 25;
+        var ballScale = height / 25;
 
         Camera m_OrthographicCamera = Camera.main;
         m_OrthographicCamera.transform.position = new Vector3(width / 2, height / 2, -10);
@@ -64,25 +75,71 @@ public class GameFactory
         leftWall.gameObject.transform.position = new Vector3(0, height / 2, 0);
         leftWall.gameObject.transform.localScale = new Vector3(wallScaleThickness, height);
 
+        var walls = new List<GameObject>();
         walls.Add(rightWall);
         walls.Add(downWall);
         walls.Add(upWall);
         walls.Add(leftWall);
 
+        MinMaxVector.FindMinMax(RetrievePoints(walls), BallFactory.BALL_RADIUS * ballScale);
 
-        colorDictionary = ColorDictionary(); 
-    
     }
 
-    private static Dictionary<int, KeyValuePair<string, Color>> ColorDictionary()
+    public static float NextRandomPosition(Func<Vector2, float> GetPart)
     {
-        var dict = new Dictionary<int, KeyValuePair<string, Color>>();
-        dict.Add(1, new KeyValuePair<string, Color>("blue", Color.blue));
-        dict.Add(2, new KeyValuePair<string, Color>("red", Color.red));
-        dict.Add(3, new KeyValuePair<string, Color>("yellow", Color.yellow));
-        dict.Add(4, new KeyValuePair<string, Color>("green", Color.green));
-        return dict;
+        int next = new System.Random().Next((int)(GetPart(MinMaxVector.min) * 100), (int)(GetPart(MinMaxVector.max) * 100));
+        return (float)next / 100;
     }
 
+    private static List<Vector2> RetrievePoints(List<GameObject> walls)
+    {
+        List<Vector2> points = new List<Vector2>();
+        foreach (var wall in walls)
+        {
+            Vector3 vector3 = wall.GetComponent<Transform>().position;
+            points.Add(new Vector2(vector3.x, vector3.y));
+        }
+
+        return points;
+    }
+
+    private static class MinMaxVector
+    {
+        public static Vector2 min;
+        public static Vector2 max;
+
+        public static void FindMinMax(List<Vector2> points, float ballRadius)
+        {
+            float minY = float.MaxValue;
+            float minX = float.MaxValue;
+            float maxY = float.MinValue;
+            float maxX = float.MinValue;
+
+            foreach (var point in points)
+            {
+                if (point.y < minY)
+                {
+                    minY = point.y;
+                }
+                if (point.x < minX)
+                {
+                    minX = point.x;
+                }
+                if (point.y > maxY)
+                {
+                    maxY = point.y;
+                }
+                if (point.x > maxX)
+                {
+                    maxX = point.x;
+                }
+
+            }
+
+            min = new Vector2(minX + ballRadius, minY + ballRadius);
+            max = new Vector2(maxX - ballRadius, maxY - ballRadius);
+        }
+
+    }
 
 }

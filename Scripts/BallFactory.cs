@@ -6,6 +6,8 @@ using UnityEngine;
 public class BallFactory
 {
 
+    public static readonly float BALL_RADIUS = 0.5f;
+
     public static GameObject CreateBall(Vector2 position, String tag, Color color)
     {
         var ball = CreateBall(position, color);
@@ -19,8 +21,8 @@ public class BallFactory
     {
         var player = CreateBall(position, color);
         player.tag = "Player";
-        player.AddComponent<PlayerControll>();
         player.name = "Player";
+        player.AddComponent<PlayerControll>();
         return player;
     }
 
@@ -37,7 +39,7 @@ public class BallFactory
         rigidbody2D.gravityScale = 0;
 
         var circleCollider2D = ball.AddComponent<CircleCollider2D>();
-        circleCollider2D.radius = 0.5f;
+        circleCollider2D.radius = BALL_RADIUS;
 
         circleCollider2D.sharedMaterial = new PhysicsMaterial2D { bounciness = 0.3f, friction = 0.01f };
 
