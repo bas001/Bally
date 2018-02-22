@@ -9,11 +9,6 @@ public class PlayerControll : MonoBehaviour {
     private int speed = 500;
     public Text debugText;
 
-    // Use this for initialization
-    void Start()
-    {
-    }
-
     // Update is called once per frame
     void Update()
     {
@@ -27,18 +22,15 @@ public class PlayerControll : MonoBehaviour {
 
             GetComponent<Transform>().position = new Vector2(Input.GetTouch(0).position.x, Input.GetTouch(0).position.y);
 
-
         }
         else
         {
             float horizontalVelocity = Input.GetAxis("Horizontal");
             float verticalVelocity = Input.GetAxis("Vertical");
 
-            GetComponent<Rigidbody2D>().velocity =
-                new Vector2(horizontalVelocity * speed, verticalVelocity * speed);
+            GetComponent<Rigidbody2D>().velocity = new Vector2(horizontalVelocity * speed, verticalVelocity * speed);
 
         }
-
 
     }
 

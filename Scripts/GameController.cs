@@ -12,7 +12,6 @@ public class GameController : MonoBehaviour
     private Stopwatch sw = new Stopwatch();
     private bool playing = true;
 
-
     public static void SetIsAnyBallInMotion(bool value)
     {
         isAnyBallInMotion = value;
@@ -46,28 +45,36 @@ public class GameController : MonoBehaviour
 
     private void InstantiateRandomBall()
     {
-        Vector2 nextPosition = new Vector2(0,0);
-        Vector2? next;
-        int counter = 0;
-        do
-        {
-            next = GameFactory.NextRandomPosition();
-            if (next.HasValue)
-            {
-                nextPosition = next.Value;
-            }
-        } while (!next.HasValue && ++counter != MAX_NUMBER_OF_TRYS);
 
-        if (counter == MAX_NUMBER_OF_TRYS)
+        Vector2? nextPosition = TryFindNextPosition();
+        if (nextPosition.HasValue)
+        {
+            var color = GameFactory.GetRandomColor();
+            BallFactory.CreateBall(nextPosition.Value, color.Key, color.Value);
+        }
+        else
         {
             print("No space left on table");
             playing = false;
-            return;
         }
-
-        var color = GameFactory.GetRandomColor();
-        BallFactory.CreateBall(nextPosition, color.Key, color.Value);
 
     }
 
+    private Vector2? TryFindNextPosition()
+    {
+        for (int i = 0; i < MAX_NUMBER_OF_TRYS; i++)
+        {
+            var next = GameFactory.NextRandomPosition();
+            if(NotColliding(next))
+            {
+                return next;
+            }
+        }
+        return null;
+    }
+
+    private bool NotColliding(Vector2 pos)
+    {
+        return !Physics2D.OverlapCircle(pos, BallFactory.BALL_RADIUS * GameFactory.GetBallScale() + 1);
+    }
 }

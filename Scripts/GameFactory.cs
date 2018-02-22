@@ -11,6 +11,8 @@ public class GameFactory
     {
         return ballScale;
     }
+
+    private static System.Random rnd = new System.Random();
     private static Dictionary<int, KeyValuePair<string, Color>> colorDictionary = new Dictionary<int, KeyValuePair<string, Color>>
         {
             { 1, new KeyValuePair<string, Color>("blue", Color.blue) },
@@ -21,17 +23,12 @@ public class GameFactory
 
     public static KeyValuePair<string, Color> GetRandomColor()
     {
-        return colorDictionary[new System.Random().Next(1, 5)];
+        return colorDictionary[rnd.Next(1, 5)];
     }
 
-    public static Vector2? NextRandomPosition()
+    public static Vector2 NextRandomPosition()
     {
-        var nextPosition = new Vector2(GameFactory.NextRandomPosition(v2 => v2.x), GameFactory.NextRandomPosition(v2 => v2.y));
-        if(Physics2D.OverlapCircle(nextPosition, BallFactory.BALL_RADIUS * GameFactory.GetBallScale() + 1))
-        {
-            return null;
-        }
-        return nextPosition;
+        return new Vector2(GameFactory.NextRandomPosition(v2 => v2.x), GameFactory.NextRandomPosition(v2 => v2.y));
     }
 
     public static void Init()
@@ -40,7 +37,7 @@ public class GameFactory
         int height = Screen.height;
 
         int wallScaleThickness = height / 4;
-        var ballScale = height / 25;
+        ballScale = height / 25;
 
         Camera m_OrthographicCamera = Camera.main;
         m_OrthographicCamera.transform.position = new Vector3(width / 2, height / 2, -10);
@@ -85,9 +82,10 @@ public class GameFactory
 
     }
 
+
     public static float NextRandomPosition(Func<Vector2, float> GetPart)
     {
-        int next = new System.Random().Next((int)(GetPart(MinMaxVector.min) * 100), (int)(GetPart(MinMaxVector.max) * 100));
+        int next = rnd.Next((int)(GetPart(MinMaxVector.min) * 100), (int)(GetPart(MinMaxVector.max) * 100));
         return (float)next / 100;
     }
 
