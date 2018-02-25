@@ -1,18 +1,20 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
     public Text scoreText;
+    private static int score;
 
     private static readonly int MAX_NUMBER_OF_TRYS = 50;
     private static readonly int NEXT_BALL_TIMEOUT = 2000;
 
     private static bool isAnyBallInMotion = false;
 
-    private int score = 0;
     private Stopwatch sw = new Stopwatch();
+    private static ScoreCount scoreCount = new ScoreCount();
     private bool playing = true;
 
     public static void SetIsAnyBallInMotion(bool value)
@@ -24,9 +26,7 @@ public class GameController : MonoBehaviour
     void Start()
     {
         GameFactory.Init();
-        scoreText.text = score.ToString();
         sw.Start();
-
     }
 
     // Update is called after the Update of BallController
@@ -37,15 +37,30 @@ public class GameController : MonoBehaviour
             return;
         }
 
+        scoreText.text = score.ToString();
+
         if (!isAnyBallInMotion && sw.ElapsedMilliseconds > NEXT_BALL_TIMEOUT)
         {
             InstantiateRandomBall();
             sw.Reset();
             sw.Start();
+            scoreCount.Reset();
         }
 
         // set to true by BallController
         isAnyBallInMotion = false;
+    }
+
+    public static void PlayerCollision(string otherTag)
+    {
+        print(otherTag);
+        scoreCount.Reset(otherTag);
+        return;
+    }
+
+    public static void BallCollision(string tag)
+    {
+        score += scoreCount.Calculate(tag);
     }
 
     private void InstantiateRandomBall()

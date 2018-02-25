@@ -25,15 +25,24 @@ public class BallController : MonoBehaviour {
             return;
         }
 
-        if (collision.collider.transform.tag == gameObject.tag && getDestroyedOnNextHit)
-        {
-            Destroy(gameObject, 0.00000000001f);
-        }
+        string otherTag = collision.collider.transform.tag;
 
-        if (collision.collider.transform.tag == gameObject.tag
-            || collision.collider.transform.tag == "Player")
+        if (otherTag == "Player")
         {
+            GameController.PlayerCollision(gameObject.tag);
             getDestroyedOnNextHit = true;
+        }
+        else
+        {
+            GameController.BallCollision(gameObject.tag);
+            if (otherTag == gameObject.tag)
+            {
+                if (getDestroyedOnNextHit)
+                {
+                    Destroy(gameObject, 0.00000000001f);
+                }
+                getDestroyedOnNextHit = true;
+            }
         }
 
     }
@@ -47,7 +56,6 @@ public class BallController : MonoBehaviour {
         }
 
         return true;
-
     }
 
     private bool HasNoSpeed(float direction)
