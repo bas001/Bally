@@ -1,14 +1,17 @@
 ﻿using System.Diagnostics;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class GameController : MonoBehaviour
 {
+    public Text scoreText;
 
     private static readonly int MAX_NUMBER_OF_TRYS = 50;
     private static readonly int NEXT_BALL_TIMEOUT = 2000;
 
     private static bool isAnyBallInMotion = false;
 
+    private int score = 0;
     private Stopwatch sw = new Stopwatch();
     private bool playing = true;
 
@@ -21,7 +24,9 @@ public class GameController : MonoBehaviour
     void Start()
     {
         GameFactory.Init();
+        scoreText.text = score.ToString();
         sw.Start();
+
     }
 
     // Update is called after the Update of BallController
@@ -45,7 +50,6 @@ public class GameController : MonoBehaviour
 
     private void InstantiateRandomBall()
     {
-
         Vector2? nextPosition = TryFindNextPosition();
         if (nextPosition.HasValue)
         {
@@ -57,7 +61,6 @@ public class GameController : MonoBehaviour
             print("No space left on table");
             playing = false;
         }
-
     }
 
     private Vector2? TryFindNextPosition()
@@ -75,6 +78,6 @@ public class GameController : MonoBehaviour
 
     private bool NotColliding(Vector2 pos)
     {
-        return !Physics2D.OverlapCircle(pos, BallFactory.BALL_RADIUS * GameFactory.GetBallScale() + 1);
+        return !Physics2D.OverlapCircle(pos, GameConstants.BALL_RADIUS * GameConstants.BallScale + 1);
     }
 }

@@ -4,9 +4,8 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerControll : MonoBehaviour {
+public class PlayerController : MonoBehaviour {
 
-    private int speed = 500;
     public Text debugText;
 
     // Update is called once per frame
@@ -28,7 +27,7 @@ public class PlayerControll : MonoBehaviour {
             float horizontalVelocity = Input.GetAxis("Horizontal");
             float verticalVelocity = Input.GetAxis("Vertical");
 
-            GetComponent<Rigidbody2D>().velocity = new Vector2(horizontalVelocity * speed, verticalVelocity * speed);
+            GetComponent<Rigidbody2D>().velocity = new Vector2(horizontalVelocity * GameConstants.MaxSpeed, verticalVelocity * GameConstants.MaxSpeed);
 
         }
 

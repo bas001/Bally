@@ -5,13 +5,7 @@ using UnityEngine;
 
 public class BallController : MonoBehaviour {
 
-    private static readonly double MIN_SPEED = 0.1;
-
     bool getDestroyedOnNextHit = false;
-
-    // Use this for initialization
-    void Start() {
-    }
 
     // Update is called once per frame
     void Update() {
@@ -46,7 +40,7 @@ public class BallController : MonoBehaviour {
 
     private bool InMotion()
     {
-        if (Math.Abs(GetComponent<Rigidbody2D>().velocity.x) < MIN_SPEED && Math.Abs(GetComponent<Rigidbody2D>().velocity.y) < MIN_SPEED)
+        if (HasNoSpeed(GetComponent<Rigidbody2D>().velocity.x) && HasNoSpeed(GetComponent<Rigidbody2D>().velocity.y))
         {
             GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);
             return false;
@@ -54,6 +48,11 @@ public class BallController : MonoBehaviour {
 
         return true;
 
+    }
+
+    private bool HasNoSpeed(float direction)
+    {
+        return Math.Abs(direction) < GameConstants.MinSpeed;
     }
 
 }
