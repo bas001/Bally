@@ -18,6 +18,10 @@ public class BallController : MonoBehaviour {
         }
     }
 
+
+    /*
+     * IMPORTANT: If two ball are colliding OnCollisionEnter2D gets called once for every ball!!
+     */
     private void OnCollisionEnter2D(Collision2D collision)
     {
         if(gameObject.name != "ball")
@@ -46,7 +50,6 @@ public class BallController : MonoBehaviour {
             else
             {
                 ScoreCount.UnequalBallHit();
-
             }
         }
 
