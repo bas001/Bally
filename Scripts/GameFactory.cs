@@ -23,7 +23,7 @@ public class GameFactory
         height = Screen.height;
 
         int wallScaleThickness = height / 4;
-        var ballScale = height / 25;
+        var ballScale = height / 10;
 
         GameConstants.BallScale = ballScale;
         GameConstants.MaxSpeed = height;

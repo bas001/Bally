@@ -27,7 +27,7 @@ public class BallFactory
     {
         var ball = new GameObject();
 
-        ball.GetComponent<Transform>().localScale = new Vector3(50, 50);
+        ball.GetComponent<Transform>().localScale = new Vector3(GameConstants.BallScale, GameConstants.BallScale);
         ball.GetComponent<Transform>().position = position;
 
         var rigidbody2D = ball.AddComponent<Rigidbody2D>();

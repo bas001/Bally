@@ -29,19 +29,24 @@ public class BallController : MonoBehaviour {
 
         if (otherTag == "Player")
         {
-            GameController.PlayerCollision(gameObject.tag);
+            ScoreCount.PlayerCollision(gameObject.tag);
             getDestroyedOnNextHit = true;
         }
         else
         {
-            GameController.BallCollision(gameObject.tag);
             if (otherTag == gameObject.tag)
             {
                 if (getDestroyedOnNextHit)
                 {
+                    ScoreCount.BallDestroyed(gameObject.tag);
                     Destroy(gameObject, 0.00000000001f);
                 }
                 getDestroyedOnNextHit = true;
+            }
+            else
+            {
+                ScoreCount.UnequalBallHit();
+
             }
         }
 
