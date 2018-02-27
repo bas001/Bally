@@ -35,7 +35,7 @@ public class GameController : MonoBehaviour
             return;
         }
 
-        scoreText.text = ScoreCount.Score();
+        //scoreText.text = ScoreCount.Score();
 
         if (!isAnyBallInMotion && sw.ElapsedMilliseconds > NEXT_BALL_TIMEOUT)
         {

@@ -11,6 +11,7 @@ public class PlayerController : MonoBehaviour
     void Update()
     {
         Text text = GameObject.Find("scoreText").GetComponent<Text>();
+        text.fontSize = 20;
         if (Input.touchSupported)
         {
 
@@ -20,10 +21,10 @@ public class PlayerController : MonoBehaviour
             var targetX = touchX - GetComponent<Rigidbody2D>().position.x;
             var targetY = touchY - GetComponent<Rigidbody2D>().position.y;
 
-            if (Math.Abs(targetX) < GameConstants.BallSize / 100 && Math.Abs(targetY) < GameConstants.BallSize / 100)
+            if (Math.Abs(targetX) < GameConstants.BallSize && Math.Abs(targetY) < GameConstants.BallSize)
             {
-                text.text = "ruhe";
-                GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
+                text.text = "position: " + (int)touchX + "," + (int)touchY;
+                GetComponent<Rigidbody2D>().velocity = new Vector2(targetX * 100, targetY * 100);
             }
             else
             {
@@ -37,6 +38,8 @@ public class PlayerController : MonoBehaviour
                     targetX = targetX / Math.Abs(targetY);
                     targetY = targetY / Math.Abs(targetY);
                 }
+                text.text = "target: " + (int)targetX + "," + (int)targetY;
+
                 GetComponent<Rigidbody2D>().velocity = new Vector2(targetX * GameConstants.MaxSpeed, targetY * GameConstants.MaxSpeed);
             }
 

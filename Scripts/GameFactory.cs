@@ -26,7 +26,7 @@ public class GameFactory
         var ballScale = height / 10;
 
         GameConstants.BallScale = ballScale;
-        GameConstants.MaxSpeed = height * 10;
+        GameConstants.MaxSpeed = height * 2;
         GameConstants.MinSpeed = height / 100;
 
         Camera m_OrthographicCamera = Camera.main;
