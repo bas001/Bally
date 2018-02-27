@@ -24,7 +24,7 @@ public class PlayerController : MonoBehaviour
             if (Math.Abs(targetX) < GameConstants.BallSize && Math.Abs(targetY) < GameConstants.BallSize)
             {
                 text.text = "position: " + (int)touchX + "," + (int)touchY;
-                GetComponent<Rigidbody2D>().velocity = new Vector2(targetX * 100, targetY * 100);
+                GetComponent<Rigidbody2D>().velocity = new Vector2(targetX * 20, targetY * 20);
             }
             else
             {
