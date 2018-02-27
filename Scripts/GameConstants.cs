@@ -7,8 +7,18 @@ public class GameConstants {
     public static readonly float BALL_RADIUS = 0.5f;
 
     private static float ballScale;
+    private static float ballSize;
     private static float maxSpeed;
     private static float minSpeed;
+
+
+    public static float BallSize
+    {
+        get
+        {
+            return ballSize;
+        }
+    }
 
     public static float BallScale
     {
@@ -16,10 +26,10 @@ public class GameConstants {
         {
             return ballScale;
         }
-
         set
         {
             ballScale = value;
+            ballSize = value * BALL_RADIUS;
         }
     }
 

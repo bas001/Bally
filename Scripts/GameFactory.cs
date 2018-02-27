@@ -26,7 +26,7 @@ public class GameFactory
         var ballScale = height / 10;
 
         GameConstants.BallScale = ballScale;
-        GameConstants.MaxSpeed = height;
+        GameConstants.MaxSpeed = height * 10;
         GameConstants.MinSpeed = height / 100;
 
         Camera m_OrthographicCamera = Camera.main;
@@ -36,7 +36,6 @@ public class GameFactory
         m_OrthographicCamera.rect = new Rect(0, 0, width, height);
 
         var player = BallFactory.CreatePlayer(new Vector2(width / 2, height / 2), Color.black);
-        player.AddComponent<PlayerController>();
 
         var rightWall = GameObject.Find("rightWall");
         rightWall.GetComponent<SpriteRenderer>().color = Color.red;

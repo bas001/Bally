@@ -78,6 +78,6 @@ public class GameController : MonoBehaviour
 
     private bool NotColliding(Vector2 pos)
     {
-        return !Physics2D.OverlapCircle(pos, GameConstants.BALL_RADIUS * GameConstants.BallScale + 1);
+        return !Physics2D.OverlapCircle(pos, GameConstants.BallSize + 1);
     }
 }
