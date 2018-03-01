@@ -35,7 +35,7 @@ public class GameController : MonoBehaviour
             return;
         }
 
-        //scoreText.text = ScoreCount.Score();
+        scoreText.text = ScoreCount.Score();
 
         if (!isAnyBallInMotion && sw.ElapsedMilliseconds > NEXT_BALL_TIMEOUT)
         {
@@ -58,7 +58,7 @@ public class GameController : MonoBehaviour
         }
         else
         {
-            print("No space left on table");
+            scoreText.text = ScoreCount.Score() + " GAME OVER";
             playing = false;
         }
     }
@@ -78,6 +78,6 @@ public class GameController : MonoBehaviour
 
     private bool NotColliding(Vector2 pos)
     {
-        return !Physics2D.OverlapCircle(pos, GameConstants.BallSize + 1);
+        return !Physics2D.OverlapCircle(pos, GameConstants.BallSize + 10);
     }
 }

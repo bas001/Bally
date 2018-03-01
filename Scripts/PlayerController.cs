@@ -10,8 +10,6 @@ public class PlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        Text text = GameObject.Find("scoreText").GetComponent<Text>();
-        text.fontSize = 20;
         if (Input.touchSupported)
         {
 
@@ -21,24 +19,25 @@ public class PlayerController : MonoBehaviour
             var targetX = touchX - GetComponent<Rigidbody2D>().position.x;
             var targetY = touchY - GetComponent<Rigidbody2D>().position.y;
 
-            if (Math.Abs(targetX) < GameConstants.BallSize && Math.Abs(targetY) < GameConstants.BallSize)
+            var absTargetX = Math.Abs(targetX);
+            var absTargetY = Math.Abs(targetY);
+
+            if (absTargetX < GameConstants.BallSize && absTargetY < GameConstants.BallSize)
             {
-                text.text = "position: " + (int)touchX + "," + (int)touchY;
-                GetComponent<Rigidbody2D>().velocity = new Vector2(targetX * 20, targetY * 20);
+                GetComponent<Rigidbody2D>().velocity = new Vector2(targetX * GameConstants.FollowSpeed, targetY * GameConstants.FollowSpeed);
             }
             else
             {
-                if (Math.Abs(targetX) > Math.Abs(targetY))
+                if (Math.Abs(targetX) > absTargetY)
                 {
-                    targetY = targetY / Math.Abs(targetX);
-                    targetX = targetX / Math.Abs(targetX);
+                    targetY = targetY / absTargetX;
+                    targetX = targetX / absTargetX;
                 }
                 else
                 {
-                    targetX = targetX / Math.Abs(targetY);
-                    targetY = targetY / Math.Abs(targetY);
+                    targetX = targetX / absTargetY;
+                    targetY = targetY / absTargetY;
                 }
-                text.text = "target: " + (int)targetX + "," + (int)targetY;
 
                 GetComponent<Rigidbody2D>().velocity = new Vector2(targetX * GameConstants.MaxSpeed, targetY * GameConstants.MaxSpeed);
             }

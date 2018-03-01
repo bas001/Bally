@@ -10,7 +10,18 @@ public class GameConstants {
     private static float ballSize;
     private static float maxSpeed;
     private static float minSpeed;
+    private static float followSpeed;
 
+    public static void Init(float referenceSize)
+    {
+        ballScale = referenceSize / 10;
+        ballSize = ballScale * BALL_RADIUS;
+        maxSpeed = referenceSize * 2;
+        minSpeed = referenceSize / 100;
+        followSpeed = referenceSize / 20;
+        followSpeed = 20;
+
+    }
 
     public static float BallSize
     {
@@ -26,11 +37,6 @@ public class GameConstants {
         {
             return ballScale;
         }
-        set
-        {
-            ballScale = value;
-            ballSize = value * BALL_RADIUS;
-        }
     }
 
     public static float MaxSpeed
@@ -38,11 +44,6 @@ public class GameConstants {
         get
         {
             return maxSpeed;
-        }
-
-        set
-        {
-            maxSpeed = value;
         }
     }
 
@@ -52,10 +53,14 @@ public class GameConstants {
         {
             return minSpeed;
         }
+    }
 
-        set
+    public static float FollowSpeed
+    {
+        get
         {
-            minSpeed = value;
+            return followSpeed;
         }
+
     }
 }

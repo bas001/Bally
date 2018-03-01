@@ -23,11 +23,8 @@ public class GameFactory
         height = Screen.height;
 
         int wallScaleThickness = height / 4;
-        var ballScale = height / 10;
 
-        GameConstants.BallScale = ballScale;
-        GameConstants.MaxSpeed = height * 2;
-        GameConstants.MinSpeed = height / 100;
+        GameConstants.Init(height);
 
         Camera m_OrthographicCamera = Camera.main;
         m_OrthographicCamera.transform.position = new Vector3(width / 2, height / 2, -10);
