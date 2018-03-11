@@ -1,13 +1,11 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class BallFactory
 {
     public static GameObject CreateBall(Vector2 position, String tag)
     {
-        var ball = CreateBall(position, GameFactory.GetColor(tag));
+        var ball = CreateBall(position, ColorWrapper.Get(tag));
         ball.tag = tag;
         ball.name = "ball";
         ball.AddComponent<BallController>();

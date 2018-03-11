@@ -1,37 +1,21 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class GameFactory
 {
-
     private static int width;
     private static int height;
     private static List<GameObject> walls = new List<GameObject>();
 
-    internal static Color GetColor(string tag)
-    {
-        return colorDict[tag];
-    }
-
     private static System.Random rnd = new System.Random();
-    private static Dictionary<string, Color> colorDict = new Dictionary<string, Color>
-    {
-        {"blue", Color.blue },
-        {"red", Color.red },
-        {"yellow", Color.yellow },
-        {"green", Color.green },
-        {"grey", Color.grey }
-    };
+
     private static Dictionary<int, string> colorMapping = new Dictionary<int, string>
         {
-            { 1, "blue"},
-            { 2,"red"},
-            { 3, "yellow"},
-            { 4, "green" }
+            {1, "blue"},
+            {2, "red"},
+            {3, "yellow"},
+            {4, "green"}
         };
-
 
     public static void Init()
     {
@@ -48,7 +32,7 @@ public class GameFactory
         m_OrthographicCamera.orthographicSize = height / 2 + 1;
         m_OrthographicCamera.rect = new Rect(0, 0, width, height);
 
-        var player = BallFactory.CreatePlayer(new Vector2(width / 2, height / 2), Color.black);
+        BallFactory.CreatePlayer(new Vector2(width / 2, height / 2), Color.black);
 
         var rightWall = GameObject.Find("rightWall");
         rightWall.GetComponent<SpriteRenderer>().color = Color.grey;
@@ -86,7 +70,7 @@ public class GameFactory
         foreach (var wall in walls)
         {
             wall.gameObject.tag = color;
-            wall.GetComponent<SpriteRenderer>().color = colorDict[color];
+            wall.GetComponent<SpriteRenderer>().color = ColorWrapper.Get(color);
         }
     }
 
@@ -105,5 +89,5 @@ public class GameFactory
         int next = rnd.Next((int)(min * 100), (int)(max * 100));
         return (float)next / 100;
     }
-    
+
 }

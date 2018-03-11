@@ -13,11 +13,8 @@ public class PlayerController : MonoBehaviour
         if (Input.touchSupported)
         {
 
-            float touchX = Input.GetTouch(0).position.x;
-            float touchY = Input.GetTouch(0).position.y;
-
-            var targetX = touchX - GetComponent<Rigidbody2D>().position.x;
-            var targetY = touchY - GetComponent<Rigidbody2D>().position.y;
+            var targetX = Input.GetTouch(0).position.x - GetComponent<Rigidbody2D>().position.x;
+            var targetY = Input.GetTouch(0).position.y - GetComponent<Rigidbody2D>().position.y;
 
             var absTargetX = Math.Abs(targetX);
             var absTargetY = Math.Abs(targetY);

@@ -17,7 +17,7 @@ public class BallController : MonoBehaviour
         }
         else
         {
-            isActive = false;
+            SetInactive();
         }
     }
 
@@ -46,15 +46,27 @@ public class BallController : MonoBehaviour
             }
             else
             {
-                OtherColorCollision();
+                SetInactive();
             }
         }
 
     }
 
-    private void OtherColorCollision()
+    private void SetInactive()
     {
-        isActive = false;
+        if (isActive)
+        {
+            isActive = false;
+        }
+    }
+
+    private void SetActive()
+    {
+        if(!isActive)
+        {
+            isActive = true;
+            gameObject.GetComponent<SpriteRenderer>().color = ColorWrapper.Brighter(gameObject.tag);
+        }
     }
 
     private void SameColorCollision()
@@ -63,7 +75,10 @@ public class BallController : MonoBehaviour
         {
             Destroy(gameObject, 0.00000000001f);
         }
-        isActive = true;
+        if(gameObject.tag == activeColor)
+        {
+            SetActive();
+        }
     }
 
     private void PlayerCollision()
@@ -71,7 +86,7 @@ public class BallController : MonoBehaviour
         string color = gameObject.tag;
         if (activeColor == null || activeColor == color)
         {
-            isActive = true;
+            SetActive();
             activeColor = color;
             GameFactory.ChangeWallColor(color);
         }
