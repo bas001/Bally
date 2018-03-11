@@ -8,14 +8,30 @@ public class GameFactory
 
     private static int width;
     private static int height;
+    private static List<GameObject> walls = new List<GameObject>();
+
+    internal static Color GetColor(string tag)
+    {
+        return colorDict[tag];
+    }
+
     private static System.Random rnd = new System.Random();
-    private static Dictionary<int, KeyValuePair<string, Color>> colorDictionary = new Dictionary<int, KeyValuePair<string, Color>>
+    private static Dictionary<string, Color> colorDict = new Dictionary<string, Color>
+    {
+        {"blue", Color.blue },
+        {"red", Color.red },
+        {"yellow", Color.yellow },
+        {"green", Color.green },
+        {"grey", Color.grey }
+    };
+    private static Dictionary<int, string> colorMapping = new Dictionary<int, string>
         {
-            { 1, new KeyValuePair<string, Color>("blue", Color.blue) },
-            { 2, new KeyValuePair<string, Color>("red", Color.red) },
-            { 3, new KeyValuePair<string, Color>("yellow", Color.yellow) },
-            { 4, new KeyValuePair<string, Color>("green", Color.green) }
+            { 1, "blue"},
+            { 2,"red"},
+            { 3, "yellow"},
+            { 4, "green" }
         };
+
 
     public static void Init()
     {
@@ -35,28 +51,29 @@ public class GameFactory
         var player = BallFactory.CreatePlayer(new Vector2(width / 2, height / 2), Color.black);
 
         var rightWall = GameObject.Find("rightWall");
-        rightWall.GetComponent<SpriteRenderer>().color = Color.red;
-        rightWall.gameObject.tag = "red";
+        rightWall.GetComponent<SpriteRenderer>().color = Color.grey;
         rightWall.gameObject.transform.position = new Vector3(width, height / 2);
         rightWall.gameObject.transform.localScale = new Vector3(wallScaleThickness, height);
 
         var downWall = GameObject.Find("downWall");
-        downWall.GetComponent<SpriteRenderer>().color = Color.green;
-        downWall.gameObject.tag = "green";
+        downWall.GetComponent<SpriteRenderer>().color = Color.grey;
         downWall.gameObject.transform.position = new Vector3(width / 2, 0);
         downWall.gameObject.transform.localScale = new Vector3(wallScaleThickness, width);
 
         var upWall = GameObject.Find("upWall");
-        upWall.GetComponent<SpriteRenderer>().color = Color.yellow;
-        upWall.gameObject.tag = "yellow";
+        upWall.GetComponent<SpriteRenderer>().color = Color.grey;
         upWall.gameObject.transform.position = new Vector3(width / 2, height);
         upWall.gameObject.transform.localScale = new Vector3(wallScaleThickness, width);
 
         var leftWall = GameObject.Find("leftWall");
-        leftWall.GetComponent<SpriteRenderer>().color = Color.blue;
-        leftWall.gameObject.tag = "blue";
+        leftWall.GetComponent<SpriteRenderer>().color = Color.grey;
         leftWall.gameObject.transform.position = new Vector3(0, height / 2, 0);
         leftWall.gameObject.transform.localScale = new Vector3(wallScaleThickness, height);
+
+        walls.Add(rightWall);
+        walls.Add(upWall);
+        walls.Add(leftWall);
+        walls.Add(downWall);
 
         var canvas = GameObject.Find("Canvas");
         canvas.GetComponent<RectTransform>().sizeDelta = new Vector3(width, height);
@@ -64,9 +81,18 @@ public class GameFactory
 
     }
 
-    public static KeyValuePair<string, Color> GetRandomColor()
+    public static void ChangeWallColor(string color)
     {
-        return colorDictionary[rnd.Next(1, 5)];
+        foreach (var wall in walls)
+        {
+            wall.gameObject.tag = color;
+            wall.GetComponent<SpriteRenderer>().color = colorDict[color];
+        }
+    }
+
+    public static string NextRandomColor()
+    {
+        return colorMapping[rnd.Next(1, 5)];
     }
 
     public static Vector2 NextRandomPosition()

@@ -53,8 +53,7 @@ public class GameController : MonoBehaviour
         Vector2? nextPosition = TryFindNextPosition();
         if (nextPosition.HasValue)
         {
-            var color = GameFactory.GetRandomColor();
-            BallFactory.CreateBall(nextPosition.Value, color.Key, color.Value);
+            BallFactory.CreateBall(nextPosition.Value, GameFactory.NextRandomColor());
         }
         else
         {
@@ -62,6 +61,7 @@ public class GameController : MonoBehaviour
             playing = false;
         }
     }
+
 
     private Vector2? TryFindNextPosition()
     {

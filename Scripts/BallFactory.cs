@@ -5,9 +5,9 @@ using UnityEngine;
 
 public class BallFactory
 {
-    public static GameObject CreateBall(Vector2 position, String tag, Color color)
+    public static GameObject CreateBall(Vector2 position, String tag)
     {
-        var ball = CreateBall(position, color);
+        var ball = CreateBall(position, GameFactory.GetColor(tag));
         ball.tag = tag;
         ball.name = "ball";
         ball.AddComponent<BallController>();

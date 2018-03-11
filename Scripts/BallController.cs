@@ -1,20 +1,23 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
-public class BallController : MonoBehaviour {
+public class BallController : MonoBehaviour
+{
 
-    bool getDestroyedOnNextHit = false;
+    bool isActive = false;
+
+    private static String activeColor;
 
     // Update is called once per frame
-    void Update() {
+    void Update()
+    {
         if (InMotion())
         {
             GameController.SetIsAnyBallInMotion(true);
-        } else
+        }
+        else
         {
-            getDestroyedOnNextHit = false;
+            isActive = false;
         }
     }
 
@@ -24,7 +27,7 @@ public class BallController : MonoBehaviour {
      */
     private void OnCollisionEnter2D(Collision2D collision)
     {
-        if(gameObject.name != "ball")
+        if (gameObject.name != "ball")
         {
             return;
         }
@@ -33,33 +36,52 @@ public class BallController : MonoBehaviour {
 
         if (otherTag == "Player")
         {
-            ScoreCount.PlayerCollision(gameObject.tag);
-            getDestroyedOnNextHit = true;
+            PlayerCollision();
         }
         else
         {
             if (otherTag == gameObject.tag)
             {
-                if (getDestroyedOnNextHit)
-                {
-                    ScoreCount.BallDestroyed(gameObject.tag);
-                    Destroy(gameObject, 0.00000000001f);
-                }
-                getDestroyedOnNextHit = true;
+                SameColorCollision();
             }
             else
             {
-                ScoreCount.UnequalBallHit();
+                OtherColorCollision();
             }
         }
 
+    }
+
+    private void OtherColorCollision()
+    {
+        isActive = false;
+    }
+
+    private void SameColorCollision()
+    {
+        if (isActive)
+        {
+            Destroy(gameObject, 0.00000000001f);
+        }
+        isActive = true;
+    }
+
+    private void PlayerCollision()
+    {
+        string color = gameObject.tag;
+        if (activeColor == null || activeColor == color)
+        {
+            isActive = true;
+            activeColor = color;
+            GameFactory.ChangeWallColor(color);
+        }
     }
 
     private bool InMotion()
     {
         if (HasNoSpeed(GetComponent<Rigidbody2D>().velocity.x) && HasNoSpeed(GetComponent<Rigidbody2D>().velocity.y))
         {
-            GetComponent<Rigidbody2D>().velocity = new Vector2(0,0);
+            GetComponent<Rigidbody2D>().velocity = new Vector2(0, 0);
             return false;
         }
 
