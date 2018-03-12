@@ -5,7 +5,8 @@ public class BallFactory
 {
     public static GameObject CreateBall(Vector2 position, String tag)
     {
-        var ball = CreateBall(position, ColorWrapper.Get(tag));
+        var ball = CreateBall(position, GameFactory.ColorDict[tag].dark);
+        ball = AddCircleColider(ball, 0.3f);
         ball.tag = tag;
         ball.name = "ball";
         ball.AddComponent<BallController>();
@@ -15,6 +16,7 @@ public class BallFactory
     public static GameObject CreatePlayer(Vector2 position, Color color)
     {
         var player = CreateBall(position, color);
+        player = AddCircleColider(player, 0f);
         player.tag = "Player";
         player.name = "Player";
         player.AddComponent<PlayerController>();
@@ -33,15 +35,18 @@ public class BallFactory
         rigidbody2D.angularDrag = 0.05f;
         rigidbody2D.gravityScale = 0;
 
-        var circleCollider2D = ball.AddComponent<CircleCollider2D>();
-        circleCollider2D.radius = GameConstants.BALL_RADIUS;
-
-        circleCollider2D.sharedMaterial = new PhysicsMaterial2D { bounciness = 0.3f, friction = 0.01f };
-
         var spriteRenderer = ball.AddComponent<SpriteRenderer>();
         spriteRenderer.sprite = Resources.Load<Sprite>("Ball");
         spriteRenderer.color = color;
 
+        return ball;
+    }
+
+    private static GameObject AddCircleColider(GameObject ball, float bounciness)
+    {
+        var circleCollider2D = ball.AddComponent<CircleCollider2D>();
+        circleCollider2D.radius = GameConstants.BALL_RADIUS;
+        circleCollider2D.sharedMaterial = new PhysicsMaterial2D { bounciness = bounciness, friction = 0.01f };
         return ball;
     }
 

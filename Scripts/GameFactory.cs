@@ -6,10 +6,18 @@ public class GameFactory
     private static int width;
     private static int height;
     private static List<GameObject> walls = new List<GameObject>();
-
     private static System.Random rnd = new System.Random();
 
-    private static Dictionary<int, string> colorMapping = new Dictionary<int, string>
+    private static Dictionary<string, ColorWrapper> colorDict;
+    public static Dictionary<string, ColorWrapper> ColorDict
+    {
+        get
+        {
+            return colorDict;
+        }
+    }
+
+    private static readonly Dictionary<int, string> colorMapping = new Dictionary<int, string>
         {
             {1, "blue"},
             {2, "red"},
@@ -63,6 +71,37 @@ public class GameFactory
         canvas.GetComponent<RectTransform>().sizeDelta = new Vector3(width, height);
         canvas.GetComponent<RectTransform>().position = new Vector3(width / 2, height / 2);
 
+        InitColors();
+
+    }
+
+    private static void InitColors()
+    {
+        float h, s, v;
+
+        Color.RGBToHSV(Color.blue, out h, out s, out v);
+        var blue = Color.HSVToRGB(h, s, v - 0.3f);
+
+        Color.RGBToHSV(Color.red, out h, out s, out v);
+        var red = Color.HSVToRGB(h, s, v - 0.3f);
+
+        Color.RGBToHSV(Color.yellow, out h, out s, out v);
+        var yellow = Color.HSVToRGB(h, s, v - 0.3f);
+
+        Color.RGBToHSV(Color.green, out h, out s, out v);
+        var green = Color.HSVToRGB(h, s, v - 0.3f);
+
+        Color.RGBToHSV(Color.grey, out h, out s, out v);
+        var grey = Color.HSVToRGB(h, s, v - 0.3f);
+
+        colorDict = new Dictionary<string, ColorWrapper>
+        {
+            {"blue", new ColorWrapper(name: "blue", dark: blue, bright: Color.blue) },
+            {"red", new ColorWrapper(name: "red", dark: red, bright: Color.red) },
+            {"yellow", new ColorWrapper(name: "yellow", dark: yellow, bright: Color.yellow) },
+            {"green", new ColorWrapper(name: "green", dark: green, bright: Color.green) },
+            {"grey", new ColorWrapper(name: "grey", dark: grey, bright: Color.grey) }
+        };
     }
 
     public static void ChangeWallColor(string color)
@@ -70,7 +109,7 @@ public class GameFactory
         foreach (var wall in walls)
         {
             wall.gameObject.tag = color;
-            wall.GetComponent<SpriteRenderer>().color = ColorWrapper.Get(color);
+            wall.GetComponent<SpriteRenderer>().color = ColorDict[color].bright;
         }
     }
 

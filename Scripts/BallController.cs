@@ -65,7 +65,7 @@ public class BallController : MonoBehaviour
         if(!isActive)
         {
             isActive = true;
-            gameObject.GetComponent<SpriteRenderer>().color = ColorWrapper.Brighter(gameObject.tag);
+            gameObject.GetComponent<SpriteRenderer>().color = GameFactory.ColorDict[tag].bright;
         }
     }
 
