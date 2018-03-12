@@ -9,21 +9,14 @@ public class GameController : MonoBehaviour
     private static readonly int MAX_NUMBER_OF_TRYS = 50;
     private static readonly int NEXT_BALL_TIMEOUT = 2000;
 
-    private static bool isAnyBallInMotion = false;
-
-    private Stopwatch sw = new Stopwatch();
+    private Stopwatch sw;
     private bool playing = true;
-
-    public static void SetIsAnyBallInMotion(bool value)
-    {
-        isAnyBallInMotion = value;
-    }
 
     // Use this for initialization
     void Start()
     {
         GameFactory.Init();
-        sw.Start();
+        sw = Stopwatch.StartNew();
     }
 
     // Update is called after the Update of BallController
@@ -36,15 +29,19 @@ public class GameController : MonoBehaviour
 
         scoreText.text = ScoreCount.Score();
 
-        if (!isAnyBallInMotion && sw.ElapsedMilliseconds > NEXT_BALL_TIMEOUT)
+        if (!State.IsAnyBallInMotion && sw.ElapsedMilliseconds > NEXT_BALL_TIMEOUT)
         {
             InstantiateRandomBall();
-            sw.Reset();
-            sw.Start();
+            sw = Stopwatch.StartNew();
         }
 
         // set to true by BallController
-        isAnyBallInMotion = false;
+        State.IsAnyBallInMotion = false;
+        if(State.WallColor != State.ActiveColor)
+        {
+            ChangeWallColor(State.ActiveColor);
+        }
+
     }
 
     private void InstantiateRandomBall()
@@ -60,7 +57,6 @@ public class GameController : MonoBehaviour
             playing = false;
         }
     }
-
 
     private Vector2? TryFindNextPosition()
     {
@@ -78,5 +74,15 @@ public class GameController : MonoBehaviour
     private bool NotColliding(Vector2 pos)
     {
         return !Physics2D.OverlapCircle(pos, GameConstants.BallSize + 10);
+    }
+
+    private void ChangeWallColor(string color)
+    {
+        foreach (var wall in GameFactory.Walls)
+        {
+            wall.gameObject.tag = color;
+            wall.GetComponent<SpriteRenderer>().color = GameFactory.ColorDict[color].bright;
+        }
+        State.WallColor = color;
     }
 }

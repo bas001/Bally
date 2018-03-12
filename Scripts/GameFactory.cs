@@ -17,6 +17,14 @@ public class GameFactory
         }
     }
 
+    public static List<GameObject> Walls
+    {
+        get
+        {
+            return walls;
+        }
+    }
+
     private static readonly Dictionary<int, string> colorMapping = new Dictionary<int, string>
         {
             {1, "blue"},
@@ -43,29 +51,33 @@ public class GameFactory
         BallFactory.CreatePlayer(new Vector2(width / 2, height / 2), Color.black);
 
         var rightWall = GameObject.Find("rightWall");
+        rightWall.gameObject.tag = "grey";
         rightWall.GetComponent<SpriteRenderer>().color = Color.grey;
         rightWall.gameObject.transform.position = new Vector3(width, height / 2);
         rightWall.gameObject.transform.localScale = new Vector3(wallScaleThickness, height);
 
         var downWall = GameObject.Find("downWall");
+        rightWall.gameObject.tag = "grey";
         downWall.GetComponent<SpriteRenderer>().color = Color.grey;
         downWall.gameObject.transform.position = new Vector3(width / 2, 0);
         downWall.gameObject.transform.localScale = new Vector3(wallScaleThickness, width);
 
         var upWall = GameObject.Find("upWall");
+        rightWall.gameObject.tag = "grey";
         upWall.GetComponent<SpriteRenderer>().color = Color.grey;
         upWall.gameObject.transform.position = new Vector3(width / 2, height);
         upWall.gameObject.transform.localScale = new Vector3(wallScaleThickness, width);
 
         var leftWall = GameObject.Find("leftWall");
+        rightWall.gameObject.tag = "grey";
         leftWall.GetComponent<SpriteRenderer>().color = Color.grey;
         leftWall.gameObject.transform.position = new Vector3(0, height / 2, 0);
         leftWall.gameObject.transform.localScale = new Vector3(wallScaleThickness, height);
 
-        walls.Add(rightWall);
-        walls.Add(upWall);
-        walls.Add(leftWall);
-        walls.Add(downWall);
+        Walls.Add(rightWall);
+        Walls.Add(upWall);
+        Walls.Add(leftWall);
+        Walls.Add(downWall);
 
         var canvas = GameObject.Find("Canvas");
         canvas.GetComponent<RectTransform>().sizeDelta = new Vector3(width, height);
@@ -73,6 +85,21 @@ public class GameFactory
 
         InitColors();
 
+    }
+
+    public static string NextRandomColor()
+    {
+        return colorMapping[rnd.Next(1, 5)];
+    }
+
+    public static Vector2 NextRandomPosition()
+    {
+        return new Vector2(NextRandomPosition(0, width), NextRandomPosition(0, height));
+    }
+
+    public static string GetNoneActiveColor()
+    {
+        return "grey";
     }
 
     private static void InitColors()
@@ -102,25 +129,6 @@ public class GameFactory
             {"green", new ColorWrapper(name: "green", dark: green, bright: Color.green) },
             {"grey", new ColorWrapper(name: "grey", dark: grey, bright: Color.grey) }
         };
-    }
-
-    public static void ChangeWallColor(string color)
-    {
-        foreach (var wall in walls)
-        {
-            wall.gameObject.tag = color;
-            wall.GetComponent<SpriteRenderer>().color = ColorDict[color].bright;
-        }
-    }
-
-    public static string NextRandomColor()
-    {
-        return colorMapping[rnd.Next(1, 5)];
-    }
-
-    public static Vector2 NextRandomPosition()
-    {
-        return new Vector2(NextRandomPosition(0, width), NextRandomPosition(0, height));
     }
 
     private static float NextRandomPosition(float min, float max)

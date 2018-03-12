@@ -4,23 +4,21 @@ using UnityEngine;
 public class BallController : MonoBehaviour
 {
 
-    bool isActive = false;
-
-    private static String activeColor;
+    private bool isActive;
 
     // Update is called once per frame
     void Update()
     {
         if (InMotion())
         {
-            GameController.SetIsAnyBallInMotion(true);
+            State.IsAnyBallInMotion = true;
         }
-        else
+
+        if(!InMotion() || State.ActiveColor != gameObject.tag)
         {
             SetInactive();
         }
     }
-
 
     /*
      * IMPORTANT: If two ball are colliding OnCollisionEnter2D gets called once for every ball!!
@@ -52,21 +50,16 @@ public class BallController : MonoBehaviour
 
     }
 
-    private void SetInactive()
-    {
-        if (isActive)
-        {
-            isActive = false;
-        }
-    }
-
     private void SetActive()
     {
-        if(!isActive)
-        {
-            isActive = true;
-            gameObject.GetComponent<SpriteRenderer>().color = GameFactory.ColorDict[tag].bright;
-        }
+        isActive = true;
+        gameObject.GetComponent<SpriteRenderer>().color = GameFactory.ColorDict[tag].bright;
+    }
+
+    private void SetInactive()
+    {
+        isActive = false;
+        gameObject.GetComponent<SpriteRenderer>().color = GameFactory.ColorDict[tag].dark;
     }
 
     private void SameColorCollision()
@@ -75,7 +68,7 @@ public class BallController : MonoBehaviour
         {
             Destroy(gameObject, 0.00000000001f);
         }
-        if(gameObject.tag == activeColor)
+        if (gameObject.tag == State.ActiveColor)
         {
             SetActive();
         }
@@ -84,11 +77,10 @@ public class BallController : MonoBehaviour
     private void PlayerCollision()
     {
         string color = gameObject.tag;
-        if (activeColor == null || activeColor == color)
+        if (State.ActiveColor == GameFactory.GetNoneActiveColor() || State.ActiveColor == color)
         {
             SetActive();
-            activeColor = color;
-            GameFactory.ChangeWallColor(color);
+            State.ActiveColor = color;
         }
     }
 
