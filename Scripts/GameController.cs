@@ -9,14 +9,14 @@ public class GameController : MonoBehaviour
     private static readonly int MAX_NUMBER_OF_TRYS = 50;
     private static readonly int NEXT_BALL_TIMEOUT = 2000;
 
-    private Stopwatch sw;
+    private Stopwatch ballCreation;
     private bool playing = true;
 
     // Use this for initialization
     void Start()
     {
         GameFactory.Init();
-        sw = Stopwatch.StartNew();
+        ballCreation = Stopwatch.StartNew();
     }
 
     // Update is called after the Update of BallController
@@ -29,18 +29,19 @@ public class GameController : MonoBehaviour
 
         scoreText.text = ScoreCount.Score();
 
-        if (!State.IsAnyBallInMotion && sw.ElapsedMilliseconds > NEXT_BALL_TIMEOUT)
+        if (!State.IsAnyBallInMotion)
         {
-            InstantiateRandomBall();
-            sw = Stopwatch.StartNew();
+            if(ballCreation.ElapsedMilliseconds > NEXT_BALL_TIMEOUT)
+            {
+                InstantiateRandomBall();
+                ballCreation = Stopwatch.StartNew();
+            }
+            GameFactory.ChangeWallColor(GameConstants.NONE_ACTIVE_COLOR);
+            State.ActiveColor = GameConstants.NONE_ACTIVE_COLOR;
         }
 
         // set to true by BallController
         State.IsAnyBallInMotion = false;
-        if(State.WallColor != State.ActiveColor)
-        {
-            ChangeWallColor(State.ActiveColor);
-        }
 
     }
 
@@ -73,16 +74,8 @@ public class GameController : MonoBehaviour
 
     private bool NotColliding(Vector2 pos)
     {
-        return !Physics2D.OverlapCircle(pos, GameConstants.BallSize + 10);
+        return !Physics2D.OverlapCircle(pos, GameConstants.BallSize);
     }
 
-    private void ChangeWallColor(string color)
-    {
-        foreach (var wall in GameFactory.Walls)
-        {
-            wall.gameObject.tag = color;
-            wall.GetComponent<SpriteRenderer>().color = GameFactory.ColorDict[color].bright;
-        }
-        State.WallColor = color;
-    }
+
 }

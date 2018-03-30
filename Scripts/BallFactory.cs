@@ -5,27 +5,27 @@ public class BallFactory
 {
     public static GameObject CreateBall(Vector2 position, String tag)
     {
-        var ball = CreateBall(position, GameFactory.ColorDict[tag].dark);
+        var ball = Create(position, tag);
         ball = AddCircleColider(ball);
-        ball.tag = tag;
         ball.name = "ball";
         ball.AddComponent<BallController>();
         return ball;
     }
 
-    public static GameObject CreatePlayer(Vector2 position, Color color)
+    public static GameObject CreatePlayer(Vector2 position)
     {
-        var player = CreateBall(position, color);
+        var player = Create(position, GameConstants.PLAYER_TAG);
         player = AddCircleColider(player);
-        player.tag = "Player";
         player.name = "Player";
         player.AddComponent<PlayerController>();
         return player;
     }
 
-    private static GameObject CreateBall(Vector2 position, Color color)
+    private static GameObject Create(Vector2 position, String tag)
     {
         var ball = new GameObject();
+
+        ball.tag = tag;
 
         ball.GetComponent<Transform>().localScale = new Vector3(GameConstants.BallScale, GameConstants.BallScale);
         ball.GetComponent<Transform>().position = position;
@@ -37,7 +37,7 @@ public class BallFactory
 
         var spriteRenderer = ball.AddComponent<SpriteRenderer>();
         spriteRenderer.sprite = Resources.Load<Sprite>("Ball");
-        spriteRenderer.color = color;
+        spriteRenderer.color = GameFactory.ColorDict[tag].dark;
 
         return ball;
     }

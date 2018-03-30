@@ -13,15 +13,17 @@ public class BallController : MonoBehaviour
         {
             State.IsAnyBallInMotion = true;
         }
-
-        if(!InMotion() || State.ActiveColor != gameObject.tag)
+        if(State.IsAnyBallInMotion == false)
         {
-            SetInactive();
+            if(isActive)
+            {
+                Destroy(gameObject, 0.00000000001f);
+            }
         }
     }
 
     /*
-     * IMPORTANT: If two ball are colliding OnCollisionEnter2D gets called once for every ball!!
+     * IMPORTANT: If two balls are colliding OnCollisionEnter2D gets called once for every ball!!
      */
     private void OnCollisionEnter2D(Collision2D collision)
     {
@@ -32,7 +34,7 @@ public class BallController : MonoBehaviour
 
         string otherTag = collision.collider.transform.tag;
 
-        if (otherTag == "Player")
+        if (otherTag == GameConstants.PLAYER_TAG)
         {
             PlayerCollision();
         }
@@ -40,11 +42,7 @@ public class BallController : MonoBehaviour
         {
             if (otherTag == gameObject.tag)
             {
-                SameColorCollision();
-            }
-            else
-            {
-                SetInactive();
+                SameColorCollision(collision.collider);
             }
         }
 
@@ -62,27 +60,34 @@ public class BallController : MonoBehaviour
         gameObject.GetComponent<SpriteRenderer>().color = GameFactory.ColorDict[tag].dark;
     }
 
-    private void SameColorCollision()
+    private void SameColorCollision(Collider2D other)
     {
-        if (isActive)
-        {
-            Destroy(gameObject, 0.00000000001f);
-        }
         if (gameObject.tag == State.ActiveColor)
         {
+            GameFactory.ChangeWallColor(gameObject.tag);
+
             SetActive();
+            var allColliders = Physics2D.OverlapCircleAll(gameObject.transform.position, GameConstants.BallSize);
+            foreach (var collider in allColliders)
+            {
+                if(collider.gameObject.name == "ball" && gameObject.tag == collider.gameObject.tag)
+                {
+                    collider.gameObject.SetActive(true);
+                }
+            }
         }
     }
 
     private void PlayerCollision()
     {
         string color = gameObject.tag;
-        if (State.ActiveColor == GameFactory.GetNoneActiveColor() || State.ActiveColor == color)
+        if (State.ActiveColor == GameConstants.NONE_ACTIVE_COLOR || State.ActiveColor == color)
         {
             SetActive();
             State.ActiveColor = color;
         }
     }
+
 
     private bool InMotion()
     {
@@ -99,5 +104,4 @@ public class BallController : MonoBehaviour
     {
         return Math.Abs(direction) < GameConstants.MinSpeed;
     }
-
 }

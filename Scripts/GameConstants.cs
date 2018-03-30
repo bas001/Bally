@@ -1,25 +1,21 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
+﻿
 public class GameConstants {
 
     public static readonly float BALL_RADIUS = 0.5f;
+    public static readonly string PLAYER_TAG= "black";
+    public static readonly string NONE_ACTIVE_COLOR = "grey";
 
     private static float ballScale;
     private static float ballSize;
-    private static float maxSpeed;
+    private static float playerVelocity;
     private static float minSpeed;
-    private static float followSpeed;
 
     public static void Init(float referenceSize)
     {
         ballScale = referenceSize / 10;
         ballSize = ballScale * BALL_RADIUS;
-        maxSpeed = referenceSize * 2;
+        playerVelocity = referenceSize / 200;
         minSpeed = referenceSize / 100;
-        followSpeed = referenceSize / 20;
-        followSpeed = 20;
 
     }
 
@@ -43,7 +39,7 @@ public class GameConstants {
     {
         get
         {
-            return maxSpeed;
+            return playerVelocity;
         }
     }
 
@@ -55,12 +51,4 @@ public class GameConstants {
         }
     }
 
-    public static float FollowSpeed
-    {
-        get
-        {
-            return followSpeed;
-        }
-
-    }
 }
